@@ -1,2 +1,3 @@
-# blockyblock
+# blockybird
 flappybird clone attempt!
+
