@@ -9,8 +9,10 @@ var mainState = {
 
 		game.stage.backgroundColor = '#71c5cf';
 		game.load.image('bird', 'assets/bird.png');
+		game.load.image('bird-dead', 'assets/bird-dead.png');
 		game.load.image('pipe', 'assets/pipe.png');
 		game.load.audio('jump', 'assets/jump.wav');
+		game.load.audio('game-over', 'assets/gg.wav');
 
 	},
 
@@ -30,8 +32,6 @@ var mainState = {
 		// spacebar calls jump function()
 		var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		spaceKey.onDown.add(this.jump, this);
-		this.jumpSound = game.add.audio('jump');
-		this.jumpSound.play();
 
 		// creating pipes
 		this.pipes = game.add.group();
@@ -51,10 +51,14 @@ var mainState = {
 
 		if(this.bird.inWorld === false) {
 			this.restartGame();
+			// this.bird = this.game.add.sprite(100, 245, 'bird-dead');
+			// // makes a gg sound
+			// this.gameOverSound = game.add.audio('game-over');
+			// this.gameOverSound.play();
 		}
 
 		// if collision
-		game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+		game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
 
 		// bird animation
 		if (this.bird.angle < 20) {
@@ -73,6 +77,9 @@ var mainState = {
 		animation.to({angle: -20}, 100);
 		animation.start();
 
+		// makes a jumping sound
+		this.jumpSound = game.add.audio('jump');
+		this.jumpSound.play();
 	},
 
 	hitPipe: function() {
@@ -85,6 +92,7 @@ var mainState = {
 		this.pipes.forEachAlive(function(p) {
 			p.body.velocity.x = 0;
 		}, this);
+
 	},
 
 	restartGame: function() {
