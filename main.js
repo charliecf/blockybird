@@ -10,6 +10,7 @@ var mainState = {
 		game.stage.backgroundColor = '#71c5cf';
 		game.load.image('bird', 'assets/bird.png');
 		game.load.image('pipe', 'assets/pipe.png');
+		game.load.audio('jump', 'assets/jump.wav');
 
 	},
 
@@ -20,6 +21,7 @@ var mainState = {
 
 		// init the bird
 		this.bird = this.game.add.sprite(100, 245, 'bird');
+		this.bird.anchor.setTo(-0.2, 0.5);
 
 		// physics of the bird
 		game.physics.arcade.enable(this.bird);
@@ -28,6 +30,8 @@ var mainState = {
 		// spacebar calls jump function()
 		var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		spaceKey.onDown.add(this.jump, this);
+		this.jumpSound = game.add.audio('jump');
+		this.jumpSound.play();
 
 		// creating pipes
 		this.pipes = game.add.group();
@@ -52,10 +56,35 @@ var mainState = {
 		// if collision
 		game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
 
+		// bird animation
+		if (this.bird.angle < 20) {
+			this.bird.angle += 1;
+		}
+
 	},
 
 	jump: function() {
+		if(this.bird.alive === false) {
+			return;
+		}
 		this.bird.body.velocity.y = -350;
+
+		var animation = game.add.tween(this.bird);
+		animation.to({angle: -20}, 100);
+		animation.start();
+
+	},
+
+	hitPipe: function() {
+		if(this.bird.alive === false) {
+			return;
+		}
+		this.bird.alive = false;
+
+		game.time.events.remove(this.timer);
+		this.pipes.forEachAlive(function(p) {
+			p.body.velocity.x = 0;
+		}, this);
 	},
 
 	restartGame: function() {
