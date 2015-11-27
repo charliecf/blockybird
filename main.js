@@ -52,9 +52,9 @@ var mainState = {
 		if(this.bird.inWorld === false) {
 			this.restartGame();
 			// this.bird = this.game.add.sprite(100, 245, 'bird-dead');
-			// // makes a gg sound
-			// this.gameOverSound = game.add.audio('game-over');
-			// this.gameOverSound.play();
+			// makes a gg sound
+			this.gameOverSound = game.add.audio('game-over');
+			this.gameOverSound.play();
 		}
 
 		// if collision
@@ -92,7 +92,10 @@ var mainState = {
 		this.pipes.forEachAlive(function(p) {
 			p.body.velocity.x = 0;
 		}, this);
-
+		
+		// makes a gg sound
+		this.gameOverSound = game.add.audio('game-over');
+		this.gameOverSound.play();
 	},
 
 	restartGame: function() {
